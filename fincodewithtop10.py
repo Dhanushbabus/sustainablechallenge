@@ -1,30 +1,36 @@
-import os
 import streamlit as st
+import os
+import tempfile
 
-def list_files_in_box_folder():
-    # Get the path of the user's directory
-    user_dir = os.path.expanduser("~")
+def select_folder():
+    folder_path = st.sidebar.text_input("Enter Folder Path:")
+    if st.sidebar.button("Select Folder"):
+        if os.path.exists(folder_path):
+            st.sidebar.success(f"Folder selected: {folder_path}")
+            return folder_path
+        else:
+            st.sidebar.error("Invalid folder path")
+            return None
+    return None
 
-    # Assuming "box" is a subfolder within the user's directory
-    box_folder = os.path.join(user_dir, "box")
+def get_special_folders(folder_path):
+    # Add logic here to find paths for Box, Box Sync, or temp folders
+    # For now, let's just return the selected folder path
+    return folder_path
 
-    # List all files and directories in the "box" folder
-    contents = os.listdir(box_folder)
-
-    return contents
+def get_temp_folder():
+    return tempfile.gettempdir()
 
 def main():
-    st.title("List Files in 'box' Folder")
+    st.title("Folder Selector")
 
-    # List files and folders
-    contents = list_files_in_box_folder()
-
-    if contents:
-        st.write("Contents of the 'box' folder:")
-        for item in contents:
-            st.write(item)
-    else:
-        st.write("The 'box' folder is empty.")
+    folder_path = select_folder()
+    if folder_path:
+        st.write("Selected Folder Path:", folder_path)
+        st.write("Special Folders:")
+        special_folders = get_special_folders(folder_path)
+        st.write(special_folders)
+        st.write("Temporary Folder:", get_temp_folder())
 
 if __name__ == "__main__":
     main()
